@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>原神抽卡运势分析</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background: #f0f0f0;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .result { 
+            color: #d4a574; 
+            font-size: 24px; 
+            margin: 20px 0;
+        }
+        .detail { 
+            line-height: 1.8; 
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 你的原神抽卡运势报告</h1>
+        <div id="report">
+            <p>正在生成你的专属运势分析...</p>
+        </div>
+    </div>
+
+    <script>
+        // 从URL获取参数（金数据传过来的）
+        function getParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 生成运势结果
+        function generateReport() {
+            const uid = getParameter('uid') || '旅行者';
+            const playtime = getParameter('playtime') || '0';
+            
+            // 简单的运势算法（你们可以后期修改）
+            const luck = Math.random() * 100;
+            let luckText = '';
+            let advice = '';
+            
+            if (luck > 80) {
+                luckText = '🌟 欧皇附体';
+                advice = '今日运势爆棚！建议立即抽取限定UP池，出货概率极高！';
+            } else if (luck > 50) {
+                luckText = '✨ 运势平平';
+                advice = '运势中规中矩，建议垫几发试试水，或者等待明日再抽。';
+            } else {
+                luckText = '💀 非酋降临';
+                advice = '今日不宜抽卡！建议多攒原石，等待运势回升。';
+            }
+            
+            const reportHTML = `
+                <p class="result"><strong>${luckText}</strong></p>
+                <div class="detail">
+                    <p><strong>UID：</strong>${uid}</p>
+                    <p><strong>游戏时长：</strong>${playtime}小时</p>
+                    <p><strong>今日抽卡建议：</strong>${advice}</p>
+                    <p><strong>幸运数字：</strong>${Math.floor(Math.random() * 90 + 10)}</p>
+                    <p><em style="color:#999;">* 本结果仅供娱乐，不代表真实概率</em></p>
+                </div>
+            `;
+            
+            document.getElementById('report').innerHTML = reportHTML;
+        }
+
+        // 页面加载时生成报告
+        window.onload = generateReport;
+    </script>
+</body>
+</html>
