@@ -317,6 +317,17 @@
             content: "❌ ";
         }
 
+        /* 验证警告 */
+        .validation-warning {
+            background: rgba(255,165,0,0.15);
+            border: 1px solid #FFA500;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #FFD700;
+        }
+
         /* 调试信息 */
         .debug-info {
             margin-top: 30px;
@@ -363,22 +374,22 @@
                 <div class="card active" data-card="1">
                     <div class="card-header">
                         <div class="card-number">1</div>
-                        <div class="card-title">树脂清空速度</div>
+                        <div class="card-title">每日上线习惯</div>
                     </div>
                     <div class="card-content">
-                        <p>你的每日原石树脂，平均多久清空？</p>
+                        <p>你平均每天在《原神》里花费多少时间？</p>
                         <div class="options">
                             <input type="radio" id="q1_1" name="q1" value="1" onchange="enableNext(1)">
-                            <label for="q1_1">0-30分钟（痛，太痛了）</label>
+                            <label for="q1_1">不到30分钟（领个月卡就跑）</label>
                             
                             <input type="radio" id="q1_2" name="q1" value="2" onchange="enableNext(1)">
-                            <label for="q1_2">30-120分钟（时间管理大师）</label>
+                            <label for="q1_2">30-120分钟（清委托+树脂）</label>
                             
                             <input type="radio" id="q1_3" name="q1" value="3" onchange="enableNext(1)">
-                            <label for="q1_3">120-300分钟（休闲摸鱼派）</label>
+                            <label for="q1_3">2-5小时（沉浸式探索）</label>
                             
                             <input type="radio" id="q1_4" name="q1" value="4" onchange="enableNext(1)">
-                            <label for="q1_4">300分钟以上（世界居民型）</label>
+                            <label for="q1_4">5小时以上（提瓦特是我家）</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -573,6 +584,9 @@
 
             <div class="fortune-details" id="fortuneDetails"></div>
 
+            <!-- 验证警告提示 -->
+            <div id="validationWarning" class="validation-warning" style="display:none;"></div>
+
             <div class="debug-info" id="debugInfo"></div>
 
             <button type="button" class="btn" onclick="restart()" style="margin-top: 20px;">重新检测</button>
@@ -713,12 +727,8 @@
             const answers = collectAnswers();
             if (!answers) return;
             
-            // 验证样本有效性
+            // 验证样本有效性（不再阻止提交，仅记录）
             const validation = validateAnswers(answers);
-            if (!validation.valid) {
-                alert(`检测到无效样本：${validation.reason}，请重新填写`);
-                return;
-            }
             
             // 计算运势
             const fortuneId = calculateFortune(answers);
@@ -728,10 +738,10 @@
             const { good, bad } = generateGoodBad(fortuneId, fortune.level, answers);
             
             // 显示结果
-            showFortune(fortune, good, bad, answers);
+            showFortune(fortune, good, bad, answers, fortuneId, validation);
             
-            // 提交数据
-            submitToGitHub(answers, fortuneId, fortune.level);
+            // 提交数据（包含验证状态）
+            submitToGitHub(answers, fortuneId, fortune.level, validation);
         }
 
         // ========== 收集答案 ==========
@@ -748,20 +758,28 @@
             return answers;
         }
 
-        // ========== 验证答案 ==========
+        // ========== 验证答案（仅记录，不阻止） ==========
         function validateAnswers(answers) {
             const q1 = parseInt(answers[0]);
             const q4 = parseInt(answers[3]);
-            if (q1 >= 3 && q4 <= 2) {
-                return { valid: false, reason: '声称300分钟但实际只上线1-2天' };
-            }
-            
             const q6 = parseInt(answers[5]);
             const q7 = parseInt(answers[6]);
-            if (q7 >= 9 && q6 >= 3) {
-                return { valid: false, reason: '直觉10分但自认非酋' };
+            
+            const issues = [];
+            
+            if (q1 >= 3 && q4 <= 2) {
+                issues.push('宣称长时间游戏但实际登录天数少');
             }
-            return { valid: true };
+            
+            if (q7 >= 9 && q6 >= 3) {
+                issues.push('高友好度但自认非酋');
+            }
+            
+            return {
+                valid: issues.length === 0,
+                issues: issues,
+                warning: issues.length > 0 ? '检测到部分矛盾答案' : null
+            };
         }
 
         // ========== 计算运势 ==========
@@ -823,7 +841,7 @@
         }
 
         // ========== 显示结果 ==========
-        function showFortune(fortune, good, bad, answers) {
+        function showFortune(fortune, good, bad, answers, fortuneId, validation) {
             document.getElementById('surveyPage').style.display = 'none';
             document.getElementById('resultPage').style.display = 'block';
             
@@ -843,25 +861,35 @@
             `;
             document.getElementById('fortuneDetails').innerHTML = detailsHTML;
             
+            // 显示验证警告（如果有）
+            const warningEl = document.getElementById('validationWarning');
+            if (validation.warning) {
+                warningEl.textContent = `⚠️ ${validation.warning}：${validation.issues.join('、')}`;
+                warningEl.style.display = 'block';
+            } else {
+                warningEl.style.display = 'none';
+            }
+            
             const weekday = getCurrentWeekday();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
             document.getElementById('debugInfo').innerHTML = `
                 <p><strong>答案序列：</strong>${answers.join(' | ')}</p>
                 <p><strong>访问时间：</strong>星期${weekdays[weekday]}</p>
                 <p><strong>签文ID：</strong>${fortuneId}</p>
-                <p><strong>哈希值：</strong>${hashString(answers.join('') + fortuneId)}</p>
+                <p><strong>数据质量：</strong>${validation.valid ? '✅ 有效样本' : '⚠️ 样本仅供参考'}</p>
             `;
         }
 
         // ========== 提交数据 ==========
-        async function submitToGitHub(answers, fortuneId, fortuneLevel) {
+        async function submitToGitHub(answers, fortuneId, fortuneLevel, validation) {
             const data = {
                 answers: answers,
                 fortune_id: fortuneId,
                 fortune_level: fortuneLevel,
                 weekday: getCurrentWeekday(),
                 timestamp: new Date().toISOString(),
-                valid_sample: true
+                valid_sample: validation.valid,
+                validation_issues: validation.issues
             };
             
             console.log('准备提交的数据:', data);
