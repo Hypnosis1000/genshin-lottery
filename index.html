@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>原神欧非守恒定律检测仪</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        /* 星空背景 - 移除所有旋转代码 */
+        /* 星空背景 */
         body {
             font-family: 'Microsoft YaHei', sans-serif;
             margin: 0;
@@ -23,6 +24,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: all 0.3s ease;
         }
 
         /* 桌面端优化：增大字体和间距 */
@@ -54,32 +56,57 @@
             }
         }
 
-        /* 手机端优化：减小字体和间距 */
+        /* 手机端强制横屏显示 */
         @media screen and (max-width: 767px) {
+            body {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+            
             .container {
+                /* 旋转90度 */
+                transform: rotate(90deg);
+                transform-origin: center center;
+                
+                /* 强制宽高互换 */
+                width: 100vh;
+                height: 100vw;
+                
+                /* 重新定位到视口中心 */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                
+                /* 通过translate将旋转后的容器中心对准视口中心 */
+                transform: translate(-50%, -50%) rotate(90deg);
+                
+                /* 覆盖原有padding */
                 padding: 15px;
+                margin: 0;
+                
+                /* 禁用触摸滚动 */
+                touch-action: none;
             }
             
+            /* 横屏后的内容适配 */
             .cover-title {
-                font-size: 2.5em;
-            }
-            
-            .card-title {
-                font-size: 1.2em;
-            }
-            
-            .cover-emoji {
                 font-size: 3em;
+                margin-bottom: 10px;
             }
             
             .card {
-                padding: 25px;
-                min-height: 400px;
+                padding: 20px;
+                min-height: 80vh;
+                width: 90%;
+                margin: 0 auto;
             }
             
-            .start-btn {
-                padding: 15px 40px;
-                font-size: 1.1em;
+            /* 调整横向滚动条 */
+            .card-container {
+                width: 100%;
+                overflow-x: hidden;
             }
         }
 
@@ -1086,6 +1113,51 @@
             document.getElementById('surveyPage').style.display = 'none';
             document.getElementById('coverPage').style.display = 'block';
         }
+
+        // ========== 强制横屏显示函数（手机端）==========
+        function adjustRotation() {
+            // 只在移动端生效
+            if (window.innerWidth > 767) return;
+            
+            const container = document.querySelector('.container');
+            if (!container) return;
+            
+            // 获取视口尺寸
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // 设置旋转后的容器尺寸（宽高互换）
+            container.style.width = viewportHeight + 'px';
+            container.style.height = viewportWidth + 'px';
+            
+            // 确保居中
+            container.style.top = '50%';
+            container.style.left = '50%';
+            container.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化滑块值
+            updateSliderValue('q4', 'q4Value', '天');
+            updateSliderValue('q9', 'q9Value', '%');
+            
+            // 应用横屏调整
+            adjustRotation();
+        });
+
+        // 监听窗口大小变化和方向变化
+        window.addEventListener('resize', adjustRotation);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(adjustRotation, 100); // 延迟执行确保方向变化完成
+        });
+        
+        // 页面显示时重新调整（处理页面缓存恢复的情况）
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                setTimeout(adjustRotation, 100);
+            }
+        });
     </script>
 </body>
 </html>
