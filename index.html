@@ -15,8 +15,8 @@
             overflow-x: hidden;
         }
 
-        /* 桌面端横屏强制旋转 */
-        @media (min-width: 768px) {
+        /* 桌面端横屏强制旋转 - 修正版本 */
+        @media screen and (min-width: 768px) {
             body {
                 overflow: hidden;
                 display: flex;
@@ -24,30 +24,44 @@
                 justify-content: center;
                 height: 100vh;
                 width: 100vw;
+                margin: 0;
+                padding: 0;
             }
             
             .container {
-                transform: rotate(-90deg);
+                transform: rotate(90deg); /* ✅ 修正：正值90deg */
                 transform-origin: center center;
-                width: 100vh;
-                height: 100vw;
+                width: 100vh;  /* 旋转后宽度 = 视口高度 */
+                height: 100vw; /* 旋转后高度 = 视口宽度 */
                 max-width: none;
                 max-height: none;
                 min-height: 0;
-                padding: 20px 0;
+                padding: 20px;
+                box-sizing: border-box;
             }
             
+            /* 防止横屏时内容溢出 */
             .card {
-                min-height: 400px;
-                max-height: 80vh;
+                min-height: 350px;
+                max-height: 70vh; /* 限制最大高度 */
+                padding: 30px; /* 减少内边距 */
             }
             
+            /* 横屏时缩小字体和元素 */
             .cover-title {
-                font-size: 2.5em;
+                font-size: 2.2em;
             }
             
             .card-title {
-                font-size: 1.2em;
+                font-size: 1.1em;
+            }
+            
+            .cover-emoji {
+                font-size: 3em;
+            }
+            
+            .slider-container {
+                padding: 15px;
             }
         }
 
