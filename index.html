@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>原神欧非守恒定律检测仪</title>
     <style>
-        /* 原有样式保持不变 ↓↓↓ */
         /* 星空背景 */
         body {
             font-family: 'Microsoft YaHei', sans-serif;
@@ -217,6 +216,53 @@
             font-size: 1.2em;
         }
 
+        /* 滑块组件样式 */
+        .slider-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .slider-label {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .slider-value {
+            text-align: center;
+            font-size: 1.5em;
+            color: #D4A574;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #D4A574, #FFD700);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212,165,116,0.8);
+        }
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #D4A574, #FFD700);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(212,165,116,0.8);
+        }
+
         /* 卡片内置导航按钮 */
         .card-nav {
             display: flex;
@@ -365,7 +411,7 @@
         <!-- ========== 问卷页 ========== -->
         <div id="surveyPage" class="survey-page" style="display:none;">
             
-            <!-- ✅ Netlify隐藏表单（核心修改1） -->
+            <!-- ✅ Netlify隐藏表单 -->
             <form name="genshin-fortune" netlify data-netlify="true" style="display:none;">
                 <input type="hidden" name="answers">
                 <input type="hidden" name="fortune_id">
@@ -373,6 +419,8 @@
                 <input type="hidden" name="weekday">
                 <input type="hidden" name="valid_sample">
                 <input type="hidden" name="validation_issues">
+                <input type="hidden" name="sincerity_score">
+                <input type="hidden" name="suspicion_score">
                 <input type="hidden" name="user_agent">
                 <input type="hidden" name="timestamp">
             </form>
@@ -380,31 +428,27 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div class="progress-text" id="progressText">1 / 7</div>
+            <div class="progress-text" id="progressText">1 / 9</div>
 
             <!-- 卡片容器 -->
             <div class="card-container" id="cardContainer">
-                <!-- 卡片1-7内容保持不变... -->
                 <!-- 卡片1 -->
                 <div class="card active" data-card="1">
                     <div class="card-header">
                         <div class="card-number">1</div>
-                        <div class="card-title">提瓦特生活节奏调查</div>
+                        <div class="card-title">命之座节律检测</div>
                     </div>
                     <div class="card-content">
-                        <p>最近一周，你探索提瓦特的频率是？</p>
+                        <p>你的"命之座"与提瓦特共鸣频率是？</p>
                         <div class="options">
                             <input type="radio" id="q1_1" name="q1" value="1" onchange="enableNext(1)">
-                            <label for="q1_1">随缘登录（想起来看一眼）</label>
-                            
+                            <label for="q1_1">【岩】每周1-2次（随缘冥想）</label>
                             <input type="radio" id="q1_2" name="q1" value="2" onchange="enableNext(1)">
-                            <label for="q1_2">每日清日常（委托+树脂）</label>
-                            
+                            <label for="q1_2">【风】每周3-4次（日常巡游）</label>
                             <input type="radio" id="q1_3" name="q1" value="3" onchange="enableNext(1)">
-                            <label for="q1_3">深度探索（解谜+刷材料）</label>
-                            
+                            <label for="q1_3">【雷】每周5-6次（深度共鸣）</label>
                             <input type="radio" id="q1_4" name="q1" value="4" onchange="enableNext(1)">
-                            <label for="q1_4">肝帝模式（全地图清空）</label>
+                            <label for="q1_4">【火】每日上线（全勤战神）</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -417,22 +461,19 @@
                 <div class="card" data-card="2">
                     <div class="card-header">
                         <div class="card-number">2</div>
-                        <div class="card-title">648仪式次数</div>
+                        <div class="card-title">星辉契约纹章鉴定</div>
                     </div>
                     <div class="card-content">
-                        <p>你为祈愿曾献祭过的最高单笔金额？</p>
+                        <p>你的"契约纹章"在提瓦特银行留下的印记深度？</p>
                         <div class="options">
                             <input type="radio" id="q2_0" name="q2" value="0" onchange="enableNext(2)">
-                            <label for="q2_0">0元（随缘修行流）</label>
-                            
+                            <label for="q2_0">【白嫖之证】0元（天理无需交易）</label>
                             <input type="radio" id="q2_1" name="q2" value="1" onchange="enableNext(2)">
-                            <label for="q2_1">6-98元（月卡保养流）</label>
-                            
+                            <label for="q2_1">【月卡符文】6-98元（小额供奉）</label>
                             <input type="radio" id="q2_2" name="q2" value="2" onchange="enableNext(2)">
-                            <label for="q2_2">99-998元（中氪信仰流）</label>
-                            
+                            <label for="q2_2">【648圣痕】99-998元（中额献祭）</label>
                             <input type="radio" id="q2_3" name="q2" value="3" onchange="enableNext(2)">
-                            <label for="q2_3">999元+（提瓦特大陆股东）</label>
+                            <label for="q2_3">【股东纹章】999元+（大陆永久产权）</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -445,25 +486,19 @@
                 <div class="card" data-card="3">
                     <div class="card-header">
                         <div class="card-number">3</div>
-                        <div class="card-title">玄学抽卡圣地</div>
+                        <div class="card-title">时之沙漏刻度校准</div>
                     </div>
                     <div class="card-content">
-                        <p>你在哪进行祈愿仪式感觉最灵验？</p>
+                        <p>过去一个月，你的"时之沙"在哪个刻度转动最顺滑？</p>
                         <div class="options">
                             <input type="radio" id="q3_1" name="q3" value="1" onchange="enableNext(3)">
-                            <label for="q3_1">风起地大橡树下（风水宝地）</label>
-                            
+                            <label for="q3_1">【子时】00:00-06:00（深夜玄学）</label>
                             <input type="radio" id="q3_2" name="q3" value="2" onchange="enableNext(3)">
-                            <label for="q3_2">璃月港口（人气旺）</label>
-                            
+                            <label for="q3_2">【午时】12:00-14:00（正午阳气）</label>
                             <input type="radio" id="q3_3" name="q3" value="3" onchange="enableNext(3)">
-                            <label for="q3_3">稻妻神社（有神职加成）</label>
-                            
+                            <label for="q3_3">【酉时】18:00-24:00（黄昏转运）</label>
                             <input type="radio" id="q3_4" name="q3" value="4" onchange="enableNext(3)">
-                            <label for="q3_4">深渊门口（负负得正）</label>
-                            
-                            <input type="radio" id="q3_5" name="q3" value="5" onchange="enableNext(3)">
-                            <label for="q3_5">哪方便在哪抽（无神论者）</label>
+                            <label for="q3_4">【随机】看缘分（时空乱流）</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -476,50 +511,42 @@
                 <div class="card" data-card="4">
                     <div class="card-header">
                         <div class="card-number">4</div>
-                        <div class="card-title">每日委托完成率</div>
+                        <div class="card-title">七天神像充能率</div>
                     </div>
                     <div class="card-content">
-                        <p>回忆最近7天，你实际上线原神的天数是？</p>
-                        <div class="options">
-                            <input type="radio" id="q4_1" name="q4" value="1" onchange="enableNext(4)">
-                            <label for="q4_1">0-1天（委托？什么委托？）</label>
-                            
-                            <input type="radio" id="q4_2" name="q4" value="2" onchange="enableNext(4)">
-                            <label for="q4_2">2-3天（想起来就做）</label>
-                            
-                            <input type="radio" id="q4_3" name="q4" value="3" onchange="enableNext(4)">
-                            <label for="q4_3">4-5天（老玩家基本功）</label>
-                            
-                            <input type="radio" id="q4_4" name="q4" value="4" onchange="enableNext(4)">
-                            <label for="q4_4">6-7天（全勤战神）</label>
+                        <p>最近7天，你的神像共鸣回路完整度？</p>
+                        <div class="slider-container">
+                            <label class="slider-label" for="q4">实际登录天数</label>
+                            <div class="slider-value" id="q4Value">0 天</div>
+                            <input type="range" id="q4" name="q4" class="slider" min="0" max="7" value="0" 
+                                   oninput="updateSliderValue('q4', 'q4Value', '天')">
                         </div>
                     </div>
                     <div class="card-nav">
                         <button class="btn btn-prev" onclick="prevCard()">← 上一题</button>
-                        <button class="btn btn-next" onclick="nextCard()" disabled>下一题 →</button>
+                        <button class="btn btn-next" onclick="nextCard()">下一题 →</button>
                     </div>
                 </div>
 
-                <!-- 卡片5 -->
+                <!-- 卡片5 测谎陷阱题 -->
                 <div class="card" data-card="5">
                     <div class="card-header">
                         <div class="card-number">5</div>
-                        <div class="card-title">抽卡信仰流派</div>
+                        <div class="card-title">圣遗物共鸣仪式</div>
                     </div>
                     <div class="card-content">
-                        <p>你的抽卡哲学是？</p>
+                        <p>抽卡前，你通常会进行哪种圣遗物共鸣仪式？</p>
                         <div class="options">
                             <input type="radio" id="q5_1" name="q5" value="1" onchange="enableNext(5)">
-                            <label for="q5_1">单抽出奇迹（垫刀教忠实信徒）</label>
-                            
+                            <label for="q5_1">【整理派】将背包按星级颜色排序</label>
                             <input type="radio" id="q5_2" name="q5" value="2" onchange="enableNext(5)">
-                            <label for="q5_2">十连真男人（保底教大祭司）</label>
-                            
+                            <label for="q5_2">【玄学派】在风起地连续跳跃7次再抽</label>
                             <input type="radio" id="q5_3" name="q5" value="3" onchange="enableNext(5)">
-                            <label for="q5_3">攒满180抽再动（终极囤囤鼠）</label>
-                            
+                            <label for="q5_3">【仪式派】用左手无名指点击祈愿按钮</label>
                             <input type="radio" id="q5_4" name="q5" value="4" onchange="enableNext(5)">
-                            <label for="q5_4">抽到出为止（梭哈是一种智慧）</label>
+                            <label for="q5_4">【极端派】每次抽卡前卸载重装游戏</label>
+                            <input type="radio" id="q5_5" name="q5" value="5" onchange="enableNext(5)">
+                            <label for="q5_5">【现实派】无所谓，直接抽</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -532,22 +559,21 @@
                 <div class="card" data-card="6">
                     <div class="card-header">
                         <div class="card-number">6</div>
-                        <div class="card-title">圣遗物强化手气</div>
+                        <div class="card-title">命定值累积进度</div>
                     </div>
                     <div class="card-content">
-                        <p>你认为自己强化圣遗物的手气如何？</p>
+                        <p>当前你的"命定值"累积到哪个节点？</p>
                         <div class="options">
                             <input type="radio" id="q6_1" name="q6" value="1" onchange="enableNext(6)">
-                            <label for="q6_1">次次30%起步（欧神在世）</label>
-                            
+                            <label for="q6_1">0-20抽（刚重置，从零开始）</label>
                             <input type="radio" id="q6_2" name="q6" value="2" onchange="enableNext(6)">
-                            <label for="q6_2">偶尔能成双（正常人）</label>
-                            
+                            <label for="q6_2">21-50抽（小垫几手）</label>
                             <input type="radio" id="q6_3" name="q6" value="3" onchange="enableNext(6)">
-                            <label for="q6_3">单暴都歪给生命（非酋本酋）</label>
-                            
+                            <label for="q6_3">51-75抽（接近保底）</label>
                             <input type="radio" id="q6_4" name="q6" value="4" onchange="enableNext(6)">
-                            <label for="q6_4">不敢强化，怕歪（创伤后应激）</label>
+                            <label for="q6_4">76-90抽（大保底临界）</label>
+                            <input type="radio" id="q6_5" name="q6" value="5" onchange="enableNext(6)">
+                            <label for="q6_5">90抽+（已硬吃保底）</label>
                         </div>
                     </div>
                     <div class="card-nav">
@@ -560,32 +586,72 @@
                 <div class="card" data-card="7">
                     <div class="card-header">
                         <div class="card-number">7</div>
-                        <div class="card-title">提瓦特友好度</div>
+                        <div class="card-title">星辉回响余韵</div>
                     </div>
                     <div class="card-content">
-                        <p>用1-10分评估，今天"提瓦特"对你的友好度？</p>
+                        <p>上次"金色传说"的余韵，至今回荡了多久？</p>
                         <div class="options">
                             <input type="radio" id="q7_1" name="q7" value="1" onchange="enableNext(7)">
-                            <label for="q7_1">1分（天理难容）</label>
-                            
+                            <label for="q7_1">7天内（昨日重现）</label>
+                            <input type="radio" id="q7_2" name="q7" value="2" onchange="enableNext(7)">
+                            <label for="q7_2">8-30天（本周记忆）</label>
                             <input type="radio" id="q7_3" name="q7" value="3" onchange="enableNext(7)">
-                            <label for="q7_3">3分（风龙废墟）</label>
-                            
-                            <input type="radio" id="q7_5" name="q7" value="5" onchange="enableNext(7)">
-                            <label for="q7_5">5分（普通天气）</label>
-                            
-                            <input type="radio" id="q7_7" name="q7" value="7" onchange="enableNext(7)">
-                            <label for="q7_7">7分（璃月港口）</label>
-                            
-                            <input type="radio" id="q7_10" name="q7" value="10" onchange="enableNext(7)">
-                            <label for="q7_10">10分（天理是我妈）</label>
+                            <label for="q7_3">31-90天（上月印记）</label>
+                            <input type="radio" id="q7_4" name="q7" value="4" onchange="enableNext(7)">
+                            <label for="q7_4">90天+（远古化石）</label>
                         </div>
                     </div>
                     <div class="card-nav">
                         <button class="btn btn-prev" onclick="prevCard()">← 上一题</button>
-                        <button class="btn btn-submit" onclick="submitSurvey()" disabled>🔮 生成能量印记</button>
+                        <button class="btn btn-next" onclick="nextCard()" disabled>下一题 →</button>
                     </div>
                 </div>
+
+                <!-- 卡片8 -->
+                <div class="card" data-card="8">
+                    <div class="card-header">
+                        <div class="card-number">8</div>
+                        <div class="card-title">天理回应契合度</div>
+                    </div>
+                    <div class="card-content">
+                        <p>上次5星，与你的心意契合度？</p>
+                        <div class="options">
+                            <input type="radio" id="q8_1" name="q8" value="1" onchange="enableNext(8)">
+                            <label for="q8_1">【完全契合】正是我祈愿的那位</label>
+                            <input type="radio" id="q8_2" name="q8" value="2" onchange="enableNext(8)">
+                            <label for="q8_2">【歪了但能用】不是目标但能接受</label>
+                            <input type="radio" id="q8_3" name="q8" value="3" onchange="enableNext(8)">
+                            <label for="q8_3">【经典歪了】保底给了常驻/武器</label>
+                            <input type="radio" id="q8_4" name="q8" value="4" onchange="enableNext(8)">
+                            <label for="q8_4">【没印象了】时间太久记不清</label>
+                        </div>
+                    </div>
+                    <div class="card-nav">
+                        <button class="btn btn-prev" onclick="prevCard()">← 上一题</button>
+                        <button class="btn btn-next" onclick="nextCard()" disabled>下一题 →</button>
+                    </div>
+                </div>
+
+                <!-- 卡片9 -->
+                <div class="card" data-card="9">
+                    <div class="card-header">
+                        <div class="card-number">9</div>
+                        <div class="card-title">地脉运势指数</div>
+                    </div>
+                    <div class="card-content">
+                        <p>如果给今天的抽卡运气打分（0%=纯非酋，100%=欧皇附体）</p>
+                        <div class="slider-container">
+                            <div class="slider-value" id="q9Value">50%</div>
+                            <input type="range" id="q9" name="q9" class="slider" min="0" max="100" value="50" 
+                                   oninput="updateSliderValue('q9', 'q9Value', '%')">
+                        </div>
+                    </div>
+                    <div class="card-nav">
+                        <button class="btn btn-prev" onclick="prevCard()">← 上一题</button>
+                        <button class="btn btn-submit" onclick="submitSurvey()">🔮 生成能量印记</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -609,58 +675,42 @@
     </div>
 
     <script>
-        // ========== 适宜项池子（按签等级分类） ==========
+        // ========== 适宜项池子 ==========
         const GOOD_POOLS = {
-            top: ['单抽出奇迹', '十连梭哈', '武器池许愿', '角色池', '常驻垫刀', '抽取限定UP', '冲命座', '抽专武'],
-            good: ['月卡后抽', '限定池', '单抽垫刀', '风起地抽卡', '零点后抽', '十连抽', '攒够180', '白嫖单抽'],
-            mid: ['免费单抽', '随缘垫刀', '观望', '刷本', '做委托', '攒原石', '攒够90', '日常垫刀', '掷骰子', '看直播', '刷B站', '躺平'],
-            bad: ['下线', '退游', '删游戏', '看主播', '刷本', '攒180', '等下次', '不氪', '不抽', '不动'],
-            worst: ['白嫖', '单抽', '下线', '退坑', '看风景', '给mhy打钱']
+            top: ['单抽出奇迹', '648梭哈', '武器池许愿', '限定UP', '命座冲刺', '专武抽取'],
+            good: ['月卡后抽', '风起地抽卡', '零点后抽', '十连保底', '攒够180抽', '白嫖单抽'],
+            mid: ['随缘垫刀', '刷本攒原石', '观望池子', '做委托', '掷骰子决定', '刷B站攻略'],
+            bad: ['下线保平安', '等下次复刻', '武器池', '冲动消费', '氪金上头'],
+            worst: ['删除游戏', '给主播上供', '看风景', '永久退坑']
         };
 
         // ========== 不宜项池子 ==========
         const BAD_POOLS = {
-            top: ['攒原石', '观望', '退出游戏', '犹豫'],
-            good: ['武器池', '梭哈', '正午抽卡', '氪金', '冲动消费', '继续囤'],
-            mid: ['氪金', '梭哈', '单抽', '十连', '武器池', '冲动', '上头', '玄学'],
-            bad: ['氪金', '抽卡', '看池子', '抽', '垫刀', '十连', '冲', '648', '武器池'],
-            worst: ['氪金', '十连', '冲', '抽卡', '垫刀']
+            top: ['攒原石', '犹豫观望', '退出游戏'],
+            good: ['武器池', '正午抽卡', '继续囤'],
+            mid: ['氪金梭哈', '冲动上头', '玄学仪式'],
+            bad: ['648氪金', '垫刀', '十连冲', '武器池'],
+            worst: ['氪金', '十连', '抽卡', '垫刀']
         };
 
         // ========== 签文主数据库 ==========
         const FORTUNE_DATABASE = {
             'top-0': { title: '🌟 欧皇附体·天理钦定', level: '上上签', text: '今日运势爆棚！建议立刻单抽试探，十连必出双黄蛋！' },
             'top-1': { title: '💎 648圣遗物·股东特权', level: '上上签', text: '提瓦特大陆今天为你转动！歪了算我的！' },
-            'top-2': { title: '🔥 648真男人·保底绝缘体', level: '上上签', text: '保底机制？不存在的！今天你就是米哈游策划！' },
-            'good-0': { title: '✨ 璃月港首富·财运亨通', level: '上签', text: '财运+抽卡运双buff，建议先买月卡再抽！' },
+            'good-0': { title: '✨ 璃月首富·财运亨通', level: '上签', text: '财运+抽卡运双buff，建议先买月卡再抽！' },
             'good-1': { title: '🍀 风起地欧皇·玄学有效', level: '上签', text: '玄学地点加成50%！去风起地大橡树下试试！' },
             'good-2': { title: '🎲 十连真男人·保底保护', level: '上签', text: '十连保底机制今天特别灵！冲一发！' },
-            'good-3': { title: '🌙 月卡信徒·白嫖之光', level: '上签', text: '白嫖党今日运势+200%，月卡反利！' },
-            'good-4': { title: '⚡ 终极囤囤鼠·深渊王者', level: '上签', text: '囤了180抽？今天就是见证奇迹的时刻！' },
-            'good-5': { title: '🎯 单抽出奇迹·垫刀大师', level: '上签', text: '垫刀玄学今天有效！先单抽30发试试！' },
             'mid-0': { title: '📊 提瓦特平均脸·众生平等', level: '中签', text: '今日运势=服务器平均值，建议佛系抽卡' },
             'mid-1': { title: '🎭 普通天气·无风无浪', level: '中签', text: '今天适合清树脂，抽卡建议明天再说' },
             'mid-2': { title: '☯️ 欧非守恒·动态平衡', level: '中签', text: '今日非酋=明日欧皇，建议储蓄运势' },
-            'mid-3': { title: '🎪 保底教信徒·中规中矩', level: '中签', text: '保底稳如老狗，建议攒到90抽再动' },
-            'mid-4': { title: '🌧️ 非酋前兆·油麦菜预警', level: '中签', text: '体感概率-20%，建议先吃顿好的' },
-            'mid-5': { title: '🎢 原神曲线·上下波动', level: '中签', text: '运势在±5%波动，建议观察欧皇' },
-            'mid-6': { title: '🏦 囤囤鼠日常·稳步前进', level: '中签', text: '今天适合攒，明天适合抽' },
-            'mid-7': { title: '🎮 日常玩家·无悲无喜', level: '中签', text: '抽不抽都行，反正保底还在' },
-            'mid-8': { title: '🤔 选择困难·纠结体质', level: '中签', text: '建议掷骰子决定，玄学交给天意' },
-            'mid-9': { title: '📈 概率论信徒·理性抽卡', level: '中签', text: '数学告诉你今天期望值<0.6%，建议躺平' },
-            'mid-10': { title: '🎲 提瓦特NPC·背景板', level: '中签', text: '今天你是NPC，建议看别人抽' },
-            'mid-11': { title: '☁️ 天气随机·无影响', level: '中签', text: '今天抽卡结果=服务器随机数，与天气无关' },
             'bad-0': { title: '💀 648反向保护·杀熟预警', level: '下签', text: '系统检测到股东身份，概率-50%' },
             'bad-1': { title: '🪦 非酋认证·今日不宜', level: '下签', text: '今日抽卡成功率0.01%，建议给主播上供' },
-            'bad-2': { title: '🎲 保底绝缘体·歪王之王', level: '下签', text: '今日保底必歪，建议攒到180再动' },
-            'bad-3': { title: '🔞 648封印·非酋领域', level: '下签', text: '今日氪金全部转化为提瓦特GDP，进不了自己背包' },
-            'worst-0': { title: '☠️ 648终极非酋·天理难容', level: '下下签', text: '今日抽卡=原石销毁器，建议给mhy打钱别抽了' },
-            'worst-1': { title: '📉 648反向出货·越氪越非', level: '下下签', text: '今日氪金越多，概率越低。白嫖或欧？' }
+            'worst-0': { title: '☠️ 648终极非酋·天理难容', level: '下下签', text: '今日抽卡=原石销毁器，建议给mhy打钱别抽了' }
         };
 
         // ========== 全局变量 ==========
         let currentCard = 1;
-        const totalCards = 7;
+        const totalCards = 9;
 
         // ========== 封面页 ==========
         function startSurvey() {
@@ -668,6 +718,14 @@
             document.getElementById('surveyPage').style.display = 'flex';
             updateProgress();
             updateButtons();
+        }
+
+        // ========== 滑块值更新 ==========
+        function updateSliderValue(sliderId, valueId, suffix) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(valueId);
+            valueDisplay.textContent = slider.value + suffix;
+            enableNext(currentCard);
         }
 
         // ========== 选项变化时启用下一题 ==========
@@ -717,13 +775,23 @@
         }
 
         function updateButtons() {
-            const currentCardEl = document.querySelector(`[data-card="${currentCard}"]`);
-            const selected = currentCardEl.querySelector('input[type="radio"]:checked');
-            const nextBtn = currentCardEl.querySelector('.btn-next, .btn-submit');
-            if (nextBtn) {
-                nextBtn.disabled = !selected;
+            const cardEl = document.querySelector(`[data-card="${currentCard}"]`);
+            let isAnswered = false;
+            
+            if (currentCard === 4) {
+                isAnswered = document.getElementById('q4').value !== '0';
+            } else if (currentCard === 9) {
+                isAnswered = true; // 滑块默认值50视为已答
+            } else {
+                isAnswered = !!cardEl.querySelector('input[type="radio"]:checked');
             }
-            const prevBtn = currentCardEl.querySelector('.btn-prev');
+            
+            const nextBtn = cardEl.querySelector('.btn-next, .btn-submit');
+            if (nextBtn) {
+                nextBtn.disabled = !isAnswered;
+            }
+            
+            const prevBtn = cardEl.querySelector('.btn-prev');
             if (prevBtn) {
                 prevBtn.disabled = currentCard === 1;
             }
@@ -739,46 +807,75 @@
             const fortune = FORTUNE_DATABASE[fortuneId];
             const { good, bad } = generateGoodBad(fortuneId, fortune.level, answers);
             
-            // 显示结果
             showFortune(fortune, good, bad, answers, fortuneId, validation);
-            
-            // ✅ 提交数据到Netlify（核心修改2）
             submitToNetlify(answers, fortuneId, fortune.level, validation);
         }
 
         // ========== 收集答案 ==========
         function collectAnswers() {
             const answers = [];
-            for (let i = 1; i <= totalCards; i++) {
+            
+            // Q1-Q3
+            for (let i = 1; i <= 3; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                if (!selected) {
-                    alert(`请回答第${i}题！`);
-                    return null;
-                }
+                if (!selected) { alert(`请回答第${i}题！`); return null; }
                 answers.push(selected.value);
             }
+            
+            // Q4 滑块
+            answers.push(document.getElementById('q4').value);
+            
+            // Q5-Q8
+            for (let i = 5; i <= 8; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!selected) { alert(`请回答第${i}题！`); return null; }
+                answers.push(selected.value);
+            }
+            
+            // Q9 滑块
+            answers.push(document.getElementById('q9').value);
+            
             return answers;
         }
 
-        // ========== 验证答案 ==========
+        // ========== 交叉验证逻辑 ==========
         function validateAnswers(answers) {
-            const q1 = parseInt(answers[0]);
-            const q4 = parseInt(answers[3]);
-            const q6 = parseInt(answers[5]);
-            const q7 = parseInt(answers[6]);
+            const q1 = parseInt(answers[0]); // 活跃度自评
+            const q4 = parseInt(answers[3]); // 实际登录天数
+            const q6 = parseInt(answers[5]); // 保底进度
+            const q7 = parseInt(answers[6]); // 上次出货时间
+            const q8 = parseInt(answers[7]); // 出货满意度
+            const q9 = parseInt(answers[8]); // 运气自评
+            const q5 = parseInt(answers[4]); // 测谎题
             
             const issues = [];
-            if (q1 >= 3 && q4 <= 2) {
-                issues.push('宣称长时间游戏但实际登录天数少');
-            }
-            if (q7 >= 9 && q6 >= 3) {
-                issues.push('高友好度但自认非酋');
-            }
+            
+            // 验证1：活跃度矛盾
+            const activityGap = Math.abs(q1 - Math.ceil(q4 / 2));
+            if (activityGap >= 2) issues.push('自评与行为严重不符');
+            
+            // 验证2：时间逻辑一致性
+            if (q6 <= 2 && q7 >= 3) issues.push('保底感知与出货时间冲突');
+            
+            // 验证3：非酋认知一致性
+            const objectiveLuck = (q7 <= 2 ? 0.3 : 0) + (q8 <= 2 ? 0.3 : 0);
+            const perceptionGap = Math.abs(q9/100 - (1 - objectiveLuck));
+            if (perceptionGap >= 0.5) issues.push('认知偏差异常');
+            
+            // 测谎检测
+            const sincerityScore = (q5 === 3 || q5 === 4) ? 0 : 1;
+            if (sincerityScore === 0) issues.push('测谎陷阱触发');
             
             return {
                 valid: issues.length === 0,
                 issues: issues,
-                warning: issues.length > 0 ? '检测到部分矛盾答案' : null
+                warning: issues.length > 0 ? '⚠️ 检测到逻辑矛盾' : null,
+                metrics: {
+                    activity_gap: activityGap,
+                    luck_perception_gap: perceptionGap.toFixed(2),
+                    sincerity_score: sincerityScore,
+                    suspicion_score: issues.length * 0.3 + (sincerityScore === 0 ? 0.5 : 0)
+                }
             };
         }
 
@@ -800,13 +897,13 @@
             const answerStr = answers.join(',');
             const weekday = getCurrentWeekday();
             const hash = hashString(answerStr + weekday);
-            const fortuneIndex = hash % 27;
+            const fortuneIndex = hash % 11;
             
-            if (fortuneIndex < 3) return 'top-' + fortuneIndex;
-            if (fortuneIndex < 9) return 'good-' + (fortuneIndex - 3);
-            if (fortuneIndex < 21) return 'mid-' + (fortuneIndex - 9);
-            if (fortuneIndex < 25) return 'bad-' + (fortuneIndex - 21);
-            return 'worst-' + (fortuneIndex - 25);
+            if (fortuneIndex < 2) return 'top-' + fortuneIndex;
+            if (fortuneIndex < 5) return 'good-' + (fortuneIndex - 2);
+            if (fortuneIndex < 8) return 'mid-' + (fortuneIndex - 5);
+            if (fortuneIndex < 10) return 'bad-' + (fortuneIndex - 8);
+            return 'worst-0';
         }
 
         // ========== 生成适宜/不宜 ==========
@@ -834,10 +931,7 @@
             let bad2 = badPool[(hash * 13) % badPool.length];
             if (bad2 === bad1) bad2 = badPool[(badPool.indexOf(bad1) + 1) % badPool.length];
             
-            return {
-                good: [good1, good2],
-                bad: [bad1, bad2]
-            };
+            return { good: [good1, good2], bad: [bad1, bad2] };
         }
 
         // ========== 显示结果 ==========
@@ -863,7 +957,7 @@
             
             const warningEl = document.getElementById('validationWarning');
             if (validation.warning) {
-                warningEl.textContent = `⚠️ ${validation.warning}：${validation.issues.join('、')}`;
+                warningEl.textContent = validation.warning;
                 warningEl.style.display = 'block';
             } else {
                 warningEl.style.display = 'none';
@@ -871,40 +965,40 @@
             
             const weekday = getCurrentWeekday();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            const qualityBadge = validation.metrics.sincerity_score === 1 ? 
+                '✅ 有效样本' : '⚠️ 可疑样本';
+            
             document.getElementById('debugInfo').innerHTML = `
                 <p><strong>答案序列：</strong>${answers.join(' | ')}</p>
                 <p><strong>访问时间：</strong>星期${weekdays[weekday]}</p>
                 <p><strong>签文ID：</strong>${fortuneId}</p>
-                <p><strong>数据质量：</strong>${validation.valid ? '✅ 有效样本' : '⚠️ 样本仅供参考'}</p>
+                <p><strong>样本质量：</strong>${qualityBadge}</p>
+                <p><strong>可疑度：</strong>${(validation.metrics.suspicion_score * 100).toFixed(0)}%</p>
             `;
         }
 
-        // ========== ✅ 核心修改：提交到Netlify ==========
+        // ========== 提交到Netlify ==========
         async function submitToNetlify(answers, fortuneId, fortuneLevel, validation) {
-            // 获取隐藏表单
             const form = document.querySelector('form[name="genshin-fortune"]');
             
-            // 填充数据
             form.answers.value = JSON.stringify(answers);
             form.fortune_id.value = fortuneId;
             form.fortune_level.value = fortuneLevel;
             form.weekday.value = getCurrentWeekday();
             form.valid_sample.value = validation.valid;
             form.validation_issues.value = JSON.stringify(validation.issues);
+            form.sincerity_score.value = validation.metrics.sincerity_score;
+            form.suspicion_score.value = validation.metrics.suspicion_score;
             form.user_agent.value = navigator.userAgent;
             form.timestamp.value = new Date().toISOString();
             
-            // 构建FormData
             const formData = new FormData(form);
             
             try {
-                // AJAX提交，不跳转
                 const response = await fetch('/', {
                     method: 'POST',
                     body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Accept': 'application/json' }
                 });
 
                 if (response.ok) {
@@ -928,13 +1022,20 @@
             document.querySelectorAll('input[type="radio"]').forEach(radio => {
                 radio.checked = false;
             });
+            document.getElementById('q4').value = 0;
+            document.getElementById('q9').value = 50;
+            updateSliderValue('q4', 'q4Value', '天');
+            updateSliderValue('q9', 'q9Value', '%');
+            
             document.querySelectorAll('.card').forEach(card => {
                 card.classList.remove('active', 'prev');
             });
             document.querySelector('[data-card="1"]').classList.add('active');
+            
             currentCard = 1;
             updateProgress();
             updateButtons();
+            
             document.getElementById('resultPage').style.display = 'none';
             document.getElementById('surveyPage').style.display = 'none';
             document.getElementById('coverPage').style.display = 'block';
