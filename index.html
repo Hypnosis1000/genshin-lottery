@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>原神欧非守恒定律检测仪</title>
     <style>
-        /* 星空背景 */
+        /* 星空背景 - 移除所有旋转代码 */
         body {
             font-family: 'Microsoft YaHei', sans-serif;
             margin: 0;
@@ -13,56 +13,6 @@
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: #fff;
             overflow-x: hidden;
-        }
-
-        /* 桌面端横屏强制旋转 - 修正版本 */
-        @media screen and (min-width: 768px) {
-            body {
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                width: 100vw;
-                margin: 0;
-                padding: 0;
-            }
-            
-            .container {
-                transform: rotate(90deg); /* ✅ 修正：正值90deg */
-                transform-origin: center center;
-                width: 100vh;  /* 旋转后宽度 = 视口高度 */
-                height: 100vw; /* 旋转后高度 = 视口宽度 */
-                max-width: none;
-                max-height: none;
-                min-height: 0;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-            
-            /* 防止横屏时内容溢出 */
-            .card {
-                min-height: 350px;
-                max-height: 70vh; /* 限制最大高度 */
-                padding: 30px; /* 减少内边距 */
-            }
-            
-            /* 横屏时缩小字体和元素 */
-            .cover-title {
-                font-size: 2.2em;
-            }
-            
-            .card-title {
-                font-size: 1.1em;
-            }
-            
-            .cover-emoji {
-                font-size: 3em;
-            }
-            
-            .slider-container {
-                padding: 15px;
-            }
         }
 
         .container {
@@ -75,6 +25,64 @@
             justify-content: center;
         }
 
+        /* 桌面端优化：增大字体和间距 */
+        @media screen and (min-width: 768px) {
+            .container {
+                padding: 40px;
+            }
+            
+            .cover-title {
+                font-size: 4em;
+            }
+            
+            .card-title {
+                font-size: 1.6em;
+            }
+            
+            .cover-emoji {
+                font-size: 5em;
+            }
+            
+            .card {
+                padding: 50px;
+                min-height: 500px;
+            }
+            
+            .start-btn {
+                padding: 25px 70px;
+                font-size: 1.5em;
+            }
+        }
+
+        /* 手机端优化：减小字体和间距 */
+        @media screen and (max-width: 767px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .cover-title {
+                font-size: 2.5em;
+            }
+            
+            .card-title {
+                font-size: 1.2em;
+            }
+            
+            .cover-emoji {
+                font-size: 3em;
+            }
+            
+            .card {
+                padding: 25px;
+                min-height: 400px;
+            }
+            
+            .start-btn {
+                padding: 15px 40px;
+                font-size: 1.1em;
+            }
+        }
+
         /* 封面页 */
         .cover-page {
             text-align: center;
@@ -85,7 +93,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .cover-title {
-            font-size: 3.5em;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #D4A574, #FFD700, #B8860B);
             -webkit-background-clip: text;
@@ -98,7 +105,6 @@
             margin-bottom: 40px;
         }
         .cover-emoji {
-            font-size: 4em;
             margin: 30px 0;
             animation: pulse 2s infinite;
         }
@@ -107,8 +113,6 @@
             50% { transform: scale(1.1); }
         }
         .start-btn {
-            padding: 20px 60px;
-            font-size: 1.3em;
             background: linear-gradient(45deg, #D4A574, #B8860B);
             border: none;
             border-radius: 15px;
@@ -222,7 +226,6 @@
             margin-right: 15px;
         }
         .card-title {
-            font-size: 1.4em;
             color: #FFD700;
         }
         .card-content p {
