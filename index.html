@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>原神欧非守恒定律检测仪</title>
     <style>
+        /* 原有样式保持不变 ↓↓↓ */
         /* 星空背景 */
         body {
             font-family: 'Microsoft YaHei', sans-serif;
@@ -89,39 +90,6 @@
             font-weight: bold;
             margin-top: 15px;
             text-align: center;
-        }
-
-        /* Token输入框样式 */
-        .token-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 15px;
-            border: 1px solid rgba(212,165,116,0.3);
-        }
-        .token-label {
-            display: block;
-            margin-bottom: 10px;
-            color: #FFD700;
-            font-size: 0.9em;
-        }
-        .token-input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #D4A574;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 0.85em;
-        }
-        .token-input::placeholder {
-            color: #888;
-        }
-        .token-hint {
-            margin-top: 8px;
-            font-size: 0.75em;
-            color: #aaa;
-            text-align: left;
         }
 
         /* 问卷页 */
@@ -390,23 +358,25 @@
                     点击"开始检测"即代表您同意我们的数据使用条款与隐私政策
                 </p>
             </div>
-
-            <!-- Token输入框（仅团队可见） -->
-            <div class="token-section">
-                <label class="token-label">🔐 团队数据收集Token（仅内部人员填写）：</label>
-                <input type="password" id="ghToken" class="token-input" 
-                       placeholder="输入GitHub Personal Access Token">
-                <div class="token-hint">
-                    如需收集数据，请填写具有repo权限的GitHub Token。<br>
-                    此Token仅用于存储匿名问卷数据，不会泄露给第三方。
-                </div>
-            </div>
             
             <button class="start-btn" onclick="startSurvey()">🔮 开始检测</button>
         </div>
 
         <!-- ========== 问卷页 ========== -->
         <div id="surveyPage" class="survey-page" style="display:none;">
+            
+            <!-- ✅ Netlify隐藏表单（核心修改1） -->
+            <form name="genshin-fortune" netlify data-netlify="true" style="display:none;">
+                <input type="hidden" name="answers">
+                <input type="hidden" name="fortune_id">
+                <input type="hidden" name="fortune_level">
+                <input type="hidden" name="weekday">
+                <input type="hidden" name="valid_sample">
+                <input type="hidden" name="validation_issues">
+                <input type="hidden" name="user_agent">
+                <input type="hidden" name="timestamp">
+            </form>
+
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
@@ -414,6 +384,7 @@
 
             <!-- 卡片容器 -->
             <div class="card-container" id="cardContainer">
+                <!-- 卡片1-7内容保持不变... -->
                 <!-- 卡片1 -->
                 <div class="card active" data-card="1">
                     <div class="card-header">
@@ -638,22 +609,6 @@
     </div>
 
     <script>
-        // ========== GitHub配置（关键！）==========
-        const GITHUB_CONFIG = {
-            // ⚠️ 修改为你的GitHub用户名
-            owner: '你的GitHub用户名',
-            // ⚠️ 修改为你的仓库名
-            repo: '你的仓库名',
-            // 文件路径（不需要改）
-            path: 'visitor-data.json',
-            // 分支名（不需要改）
-            branch: 'main',
-            // 安全获取Token（从输入框读取，不会硬编码）
-            get token() {
-                return document.getElementById('ghToken')?.value || '';
-            }
-        };
-
         // ========== 适宜项池子（按签等级分类） ==========
         const GOOD_POOLS = {
             top: ['单抽出奇迹', '十连梭哈', '武器池许愿', '角色池', '常驻垫刀', '抽取限定UP', '冲命座', '抽专武'],
@@ -726,12 +681,10 @@
         // ========== 卡片切换 ==========
         function nextCard() {
             if (currentCard < totalCards) {
-                // 隐藏当前卡片
                 const currentCardEl = document.querySelector(`[data-card="${currentCard}"]`);
                 currentCardEl.classList.remove('active');
                 currentCardEl.classList.add('prev');
                 
-                // 显示下一张卡片
                 currentCard++;
                 const nextCardEl = document.querySelector(`[data-card="${currentCard}"]`);
                 nextCardEl.classList.add('active');
@@ -743,11 +696,9 @@
 
         function prevCard() {
             if (currentCard > 1) {
-                // 隐藏当前卡片
                 const currentCardEl = document.querySelector(`[data-card="${currentCard}"]`);
                 currentCardEl.classList.remove('active');
                 
-                // 显示上一张卡片
                 currentCard--;
                 const prevCardEl = document.querySelector(`[data-card="${currentCard}"]`);
                 prevCardEl.classList.remove('prev');
@@ -766,16 +717,12 @@
         }
 
         function updateButtons() {
-            // 检查当前卡片是否有选择
             const currentCardEl = document.querySelector(`[data-card="${currentCard}"]`);
             const selected = currentCardEl.querySelector('input[type="radio"]:checked');
-            
             const nextBtn = currentCardEl.querySelector('.btn-next, .btn-submit');
             if (nextBtn) {
                 nextBtn.disabled = !selected;
             }
-            
-            // 更新上一题按钮状态
             const prevBtn = currentCardEl.querySelector('.btn-prev');
             if (prevBtn) {
                 prevBtn.disabled = currentCard === 1;
@@ -787,21 +734,16 @@
             const answers = collectAnswers();
             if (!answers) return;
             
-            // 验证样本有效性（不再阻止提交，仅记录）
             const validation = validateAnswers(answers);
-            
-            // 计算运势
             const fortuneId = calculateFortune(answers);
             const fortune = FORTUNE_DATABASE[fortuneId];
-            
-            // 生成适宜/不宜（确定性）
             const { good, bad } = generateGoodBad(fortuneId, fortune.level, answers);
             
             // 显示结果
             showFortune(fortune, good, bad, answers, fortuneId, validation);
             
-            // 提交数据（包含验证状态）
-            submitToGitHub(answers, fortuneId, fortune.level, validation);
+            // ✅ 提交数据到Netlify（核心修改2）
+            submitToNetlify(answers, fortuneId, fortune.level, validation);
         }
 
         // ========== 收集答案 ==========
@@ -818,7 +760,7 @@
             return answers;
         }
 
-        // ========== 验证答案（仅记录，不阻止） ==========
+        // ========== 验证答案 ==========
         function validateAnswers(answers) {
             const q1 = parseInt(answers[0]);
             const q4 = parseInt(answers[3]);
@@ -826,11 +768,9 @@
             const q7 = parseInt(answers[6]);
             
             const issues = [];
-            
             if (q1 >= 3 && q4 <= 2) {
                 issues.push('宣称长时间游戏但实际登录天数少');
             }
-            
             if (q7 >= 9 && q6 >= 3) {
                 issues.push('高友好度但自认非酋');
             }
@@ -842,7 +782,7 @@
             };
         }
 
-        // ========== 计算运势 ==========
+        // ========== 时间哈希 ==========
         function getCurrentWeekday() {
             return new Date().getDay();
         }
@@ -855,6 +795,7 @@
             return hash >>> 0;
         }
 
+        // ========== 计算运势 ==========
         function calculateFortune(answers) {
             const answerStr = answers.join(',');
             const weekday = getCurrentWeekday();
@@ -868,20 +809,13 @@
             return 'worst-' + (fortuneIndex - 25);
         }
 
-        // ========== 生成适宜/不宜（确定性） ==========
+        // ========== 生成适宜/不宜 ==========
         function generateGoodBad(fortuneId, level, answers) {
-            // 上上签和下下签特殊处理
-            if (level === '上上签') {
-                return { good: ['诸事皆宜'], bad: [] };
-            }
-            if (level === '下下签') {
-                return { good: [], bad: ['诸事不宜'] };
-            }
+            if (level === '上上签') return { good: ['诸事皆宜'], bad: [] };
+            if (level === '下下签') return { good: [], bad: ['诸事不宜'] };
             
-            // 从答案+签ID生成哈希，确保不重复
             const hash = hashString(answers.join('') + fortuneId);
             
-            // 修复：正确映射等级到池子键名
             const levelMap = {
                 '上签': 'good',
                 '中签': 'mid',
@@ -892,7 +826,6 @@
             const goodPool = [...GOOD_POOLS[poolKey]];
             const badPool = [...BAD_POOLS[poolKey]];
             
-            // 根据哈希值选取不重复项
             const good1 = goodPool[hash % goodPool.length];
             let good2 = goodPool[(hash * 7) % goodPool.length];
             if (good2 === good1) good2 = goodPool[(goodPool.indexOf(good1) + 1) % goodPool.length];
@@ -928,7 +861,6 @@
             `;
             document.getElementById('fortuneDetails').innerHTML = detailsHTML;
             
-            // 显示验证警告（如果有）
             const warningEl = document.getElementById('validationWarning');
             if (validation.warning) {
                 warningEl.textContent = `⚠️ ${validation.warning}：${validation.issues.join('、')}`;
@@ -947,119 +879,62 @@
             `;
         }
 
-        // ========== 提交数据到GitHub（重写） ==========
-        async function submitToGitHub(answers, fortuneId, fortuneLevel, validation) {
-            // 如果没有Token，只显示在控制台，不提交
-            if (!GITHUB_CONFIG.token) {
-                console.log('⚠️ 未提供GitHub Token，数据仅显示在控制台');
-                document.getElementById('debugInfo').innerHTML += 
-                    `<p style="color:#FFA500;">⚠️ 未提供Token，数据未提交到GitHub</p>`;
-                return;
-            }
-
-            const data = {
-                answers: answers,
-                fortune_id: fortuneId,
-                fortune_level: fortuneLevel,
-                weekday: getCurrentWeekday(),
-                timestamp: new Date().toISOString(),
-                valid_sample: validation.valid,
-                validation_issues: validation.issues
-            };
-
-            // 显示提交中状态
-            document.getElementById('debugInfo').innerHTML += 
-                `<p style="color:#FFD700;">⏳ 正在提交数据到GitHub...</p>`;
-
+        // ========== ✅ 核心修改：提交到Netlify ==========
+        async function submitToNetlify(answers, fortuneId, fortuneLevel, validation) {
+            // 获取隐藏表单
+            const form = document.querySelector('form[name="genshin-fortune"]');
+            
+            // 填充数据
+            form.answers.value = JSON.stringify(answers);
+            form.fortune_id.value = fortuneId;
+            form.fortune_level.value = fortuneLevel;
+            form.weekday.value = getCurrentWeekday();
+            form.valid_sample.value = validation.valid;
+            form.validation_issues.value = JSON.stringify(validation.issues);
+            form.user_agent.value = navigator.userAgent;
+            form.timestamp.value = new Date().toISOString();
+            
+            // 构建FormData
+            const formData = new FormData(form);
+            
             try {
-                // 1. 获取现有文件（需要sha来更新）
-                const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-                
-                let sha = null;
-                let existingContent = [];
-                
-                try {
-                    const getResponse = await fetch(getUrl, {
-                        headers: {
-                            'Authorization': `token ${GITHUB_CONFIG.token}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    
-                    if (getResponse.ok) {
-                        const fileData = await getResponse.json();
-                        sha = fileData.sha;
-                        // 解码现有内容
-                        const existingJson = atob(fileData.content);
-                        existingContent = JSON.parse(existingJson);
-                        // 确保是数组
-                        if (!Array.isArray(existingContent)) {
-                            existingContent = [];
-                        }
-                    }
-                } catch (error) {
-                    console.log('文件不存在或读取失败，将创建新文件');
-                    existingContent = [];
-                }
-
-                // 2. 追加新数据
-                existingContent.push(data);
-
-                // 3. 更新文件
-                const updateUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-                
-                const updateResponse = await fetch(updateUrl, {
-                    method: 'PUT',
+                // AJAX提交，不跳转
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData,
                     headers: {
-                        'Authorization': `token ${GITHUB_CONFIG.token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Add visitor data - ${new Date().toISOString()}`,
-                        content: btoa(JSON.stringify(existingContent, null, 2)),
-                        branch: GITHUB_CONFIG.branch,
-                        sha: sha  // 如果是更新现有文件，需要提供sha
-                    })
+                        'Accept': 'application/json'
+                    }
                 });
 
-                if (updateResponse.ok) {
-                    console.log('✅ 数据提交成功！', data);
+                if (response.ok) {
+                    console.log('✅ 数据已成功提交到Netlify');
                     document.getElementById('debugInfo').innerHTML += 
-                        `<p style="color:#4CAF50;">✅ 数据已成功提交到GitHub！</p>`;
+                        `<p style="color:#4CAF50;">✅ 数据已安全送达Netlify后台</p>`;
                 } else {
-                    const errorData = await updateResponse.json();
-                    console.error('提交失败:', errorData);
+                    console.error('❌ 提交失败:', response.status);
                     document.getElementById('debugInfo').innerHTML += 
-                        `<p style="color:#f44336;">❌ 提交失败: ${errorData.message}</p>`;
+                        `<p style="color:#f44336;">⚠️ 数据提交失败（但不影响结果展示）</p>`;
                 }
-
             } catch (error) {
-                console.error('网络错误:', error);
+                console.error('提交错误:', error);
                 document.getElementById('debugInfo').innerHTML += 
-                    `<p style="color:#f44336;">❌ 网络错误: ${error.message}</p>`;
+                    `<p style="color:#FFA500;">⚠️ 网络异常，数据未上传</p>`;
             }
         }
 
         // ========== 重新开始 ==========
         function restart() {
-            // 重置所有选择
             document.querySelectorAll('input[type="radio"]').forEach(radio => {
                 radio.checked = false;
             });
-            
-            // 重置卡片状态
             document.querySelectorAll('.card').forEach(card => {
                 card.classList.remove('active', 'prev');
             });
             document.querySelector('[data-card="1"]').classList.add('active');
-            
-            // 重置变量
             currentCard = 1;
             updateProgress();
             updateButtons();
-            
-            // 显示封面页
             document.getElementById('resultPage').style.display = 'none';
             document.getElementById('surveyPage').style.display = 'none';
             document.getElementById('coverPage').style.display = 'block';
