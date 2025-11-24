@@ -14,6 +14,43 @@
             color: #fff;
             overflow-x: hidden;
         }
+
+        /* 桌面端横屏强制旋转 */
+        @media (min-width: 768px) {
+            body {
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                width: 100vw;
+            }
+            
+            .container {
+                transform: rotate(-90deg);
+                transform-origin: center center;
+                width: 100vh;
+                height: 100vw;
+                max-width: none;
+                max-height: none;
+                min-height: 0;
+                padding: 20px 0;
+            }
+            
+            .card {
+                min-height: 400px;
+                max-height: 80vh;
+            }
+            
+            .cover-title {
+                font-size: 2.5em;
+            }
+            
+            .card-title {
+                font-size: 1.2em;
+            }
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -781,7 +818,7 @@
             if (currentCard === 4) {
                 isAnswered = document.getElementById('q4').value !== '0';
             } else if (currentCard === 9) {
-                isAnswered = true; // 滑块默认值50视为已答
+                isAnswered = true;
             } else {
                 isAnswered = !!cardEl.querySelector('input[type="radio"]:checked');
             }
@@ -815,24 +852,20 @@
         function collectAnswers() {
             const answers = [];
             
-            // Q1-Q3
             for (let i = 1; i <= 3; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if (!selected) { alert(`请回答第${i}题！`); return null; }
                 answers.push(selected.value);
             }
             
-            // Q4 滑块
             answers.push(document.getElementById('q4').value);
             
-            // Q5-Q8
             for (let i = 5; i <= 8; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if (!selected) { alert(`请回答第${i}题！`); return null; }
                 answers.push(selected.value);
             }
             
-            // Q9 滑块
             answers.push(document.getElementById('q9').value);
             
             return answers;
@@ -840,29 +873,25 @@
 
         // ========== 交叉验证逻辑 ==========
         function validateAnswers(answers) {
-            const q1 = parseInt(answers[0]); // 活跃度自评
-            const q4 = parseInt(answers[3]); // 实际登录天数
-            const q6 = parseInt(answers[5]); // 保底进度
-            const q7 = parseInt(answers[6]); // 上次出货时间
-            const q8 = parseInt(answers[7]); // 出货满意度
-            const q9 = parseInt(answers[8]); // 运气自评
-            const q5 = parseInt(answers[4]); // 测谎题
+            const q1 = parseInt(answers[0]);
+            const q4 = parseInt(answers[3]);
+            const q6 = parseInt(answers[5]);
+            const q7 = parseInt(answers[6]);
+            const q8 = parseInt(answers[7]);
+            const q9 = parseInt(answers[8]);
+            const q5 = parseInt(answers[4]);
             
             const issues = [];
             
-            // 验证1：活跃度矛盾
             const activityGap = Math.abs(q1 - Math.ceil(q4 / 2));
             if (activityGap >= 2) issues.push('自评与行为严重不符');
             
-            // 验证2：时间逻辑一致性
             if (q6 <= 2 && q7 >= 3) issues.push('保底感知与出货时间冲突');
             
-            // 验证3：非酋认知一致性
             const objectiveLuck = (q7 <= 2 ? 0.3 : 0) + (q8 <= 2 ? 0.3 : 0);
             const perceptionGap = Math.abs(q9/100 - (1 - objectiveLuck));
             if (perceptionGap >= 0.5) issues.push('认知偏差异常');
             
-            // 测谎检测
             const sincerityScore = (q5 === 3 || q5 === 4) ? 0 : 1;
             if (sincerityScore === 0) issues.push('测谎陷阱触发');
             
