@@ -56,7 +56,7 @@
             }
         }
 
-        /* 手机端强制横屏显示 - 修复尺寸问题 */
+        /* 手机端强制横屏显示 - 终极修复版 */
         @media screen and (max-width: 767px) {
             body {
                 overflow: hidden;
@@ -66,120 +66,170 @@
             }
             
             .container {
-                /* 核心修复：使用视口单位并限制最大尺寸 */
-                transform: translate(-50%, -50%) rotate(90deg);
-                transform-origin: center center;
+                /* 核心修复：使用视口较小值的百分比，确保完全可见 */
+                width: 85vh !important;  /* 使用视口高度的85% */
+                height: 85vw !important;  /* 使用视口宽度的85% */
                 
-                /* 确保旋转后内容不会溢出 */
-                width: min(80vh, 90vw);    /* 宽度取视口高度的80%和视口宽度的90%中较小值 */
-                height: min(80vw, 90vh);   /* 高度取视口宽度的80%和视口高度的90%中较小值 */
+                /* 严格限制最大尺寸，即使在大屏手机上也不会过大 */
+                max-width: 480px !important;
+                max-height: 320px !important;
                 
-                /* 限制最大尺寸 */
-                max-width: 600px;  /* 防止在大屏手机上过大 */
-                max-height: 400px;
-                
-                /* 精确定位 */
+                /* 精确定位到中心 */
                 position: absolute;
                 top: 50%;
                 left: 50%;
+                transform: translate(-50%, -50%) rotate(90deg) !important;
+                transform-origin: center center;
                 
-                /* 减小内边距 */
-                padding: 10px;
+                /* 减小内边距，给内容更多空间 */
+                padding: 8px !important;
                 margin: 0;
                 
                 /* 禁用触摸滚动 */
                 touch-action: none;
+                overflow: hidden; /* 隐藏溢出的内容 */
             }
             
-            /* 横屏后的内容适配 - 减小所有元素尺寸 */
+            /* ===== 所有字体使用clamp()动态缩放 ===== */
             .cover-title {
-                font-size: clamp(1.5em, 4vw, 2em);  /* 使用clamp确保字体大小适中 */
-                margin-bottom: 8px;
+                font-size: clamp(1.2em, 3.5vw, 1.6em) !important;
+                margin-bottom: 5px !important;
             }
             
             .cover-subtitle {
-                font-size: clamp(1em, 3vw, 1.2em);
-                margin-bottom: 15px;
+                font-size: clamp(0.8em, 2.5vw, 1em) !important;
+                margin-bottom: 10px !important;
             }
             
             .cover-emoji {
-                font-size: clamp(2em, 5vw, 3em);
-                margin: 10px 0;
+                font-size: clamp(1.5em, 4vw, 2em) !important;
+                margin: 8px 0 !important;
             }
             
+            /* 条款区域 - 可滚动以节省空间 */
             .terms-section {
-                margin-top: 15px;
-                padding: 15px;
-                font-size: 0.75em;
+                margin-top: 8px !important;
+                padding: 8px !important;
+                font-size: 0.65em !important;
+                max-height: 30vh; /* 限制高度 */
+                overflow-y: auto; /* 允许滚动 */
             }
             
             .card {
-                padding: 15px;
-                min-height: 60vh;  /* 减小最小高度 */
-                width: 95%;
-                margin: 0 auto;
+                padding: 12px !important;
+                width: 100% !important;
+                margin: 0 !important;
+                min-height: auto !important; /* 移除最小高度限制 */
+                max-height: 70vh; /* 限制最大高度 */
+                overflow-y: auto; /* 允许纵向滚动 */
             }
             
             .card-title {
-                font-size: clamp(1.1em, 3vw, 1.3em);
+                font-size: clamp(1em, 3vw, 1.2em) !important;
             }
             
             .card-content p {
-                font-size: clamp(0.9em, 2.5vw, 1em);
-                margin-bottom: 15px;
+                font-size: clamp(0.75em, 2.2vw, 0.85em) !important;
+                margin-bottom: 8px !important;
+            }
+            
+            /* 选项按钮 - 减小间距和内边距 */
+            .options {
+                margin-bottom: 10px !important;
             }
             
             .options label {
-                padding: 10px;
-                margin: 6px 0;
-                font-size: 0.85em;
+                padding: 8px 10px !important;
+                margin: 4px 0 !important;
+                font-size: 0.7em !important;
             }
             
+            .options input[type="radio"]:checked + label::after {
+                right: 10px !important;
+                font-size: 1em !important;
+            }
+            
+            /* 滑块组件 - 紧凑布局 */
             .slider-container {
-                margin: 15px 0;
-                padding: 12px;
+                margin: 10px 0 !important;
+                padding: 10px !important;
             }
             
-            /* 导航按钮缩小 */
+            .slider-label {
+                font-size: clamp(0.75em, 2vw, 0.85em) !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .slider-value {
+                font-size: clamp(0.9em, 2.5vw, 1em) !important;
+                margin-bottom: 8px !important;
+            }
+            
+            /* 导航按钮 - 更小更紧凑 */
             .card-nav {
-                gap: 10px;
+                gap: 8px !important;
+                margin-top: 10px !important;
             }
             
             .card-nav button {
-                padding: 8px 15px;
-                font-size: 0.9em;
+                padding: 6px 12px !important;
+                font-size: 0.75em !important;
             }
             
             .start-btn {
-                padding: 12px 35px;
-                font-size: 1em;
-                margin: 15px 0;
+                padding: 10px 25px !important;
+                font-size: 0.9em !important;
+                margin: 10px 0 !important;
             }
             
-            /* 结果页适配 */
+            /* 进度条 - 更细 */
+            .progress-bar {
+                height: 4px !important;
+                margin-bottom: 12px !important;
+            }
+            
+            .progress-text {
+                font-size: 0.75em !important;
+                margin-bottom: 12px !important;
+            }
+            
+            /* 结果页 - 单列布局，缩小字体 */
             .fortune-card {
-                padding: 20px;
+                padding: 15px !important;
             }
             
             .fortune-title {
-                font-size: clamp(1.5em, 4vw, 1.8em);
+                font-size: clamp(1.2em, 3vw, 1.4em) !important;
             }
             
             .fortune-level {
-                font-size: 1.1em;
+                font-size: 1em !important;
             }
             
             .fortune-text {
-                font-size: 1em;
+                font-size: clamp(0.75em, 2vw, 0.85em) !important;
             }
             
             .fortune-details {
-                grid-template-columns: 1fr;  /* 单列布局 */
-                gap: 12px;
+                grid-template-columns: 1fr !important; /* 强制单列 */
+                gap: 8px !important;
+                margin-top: 15px !important;
             }
             
             .good, .bad {
-                padding: 10px;
+                padding: 8px !important;
+                font-size: 0.7em !important;
+            }
+            
+            .debug-info {
+                padding: 8px !important;
+                font-size: 0.6em !important;
+                margin-top: 10px !important;
+            }
+            
+            .validation-warning {
+                padding: 6px !important;
+                font-size: 0.65em !important;
             }
         }
 
@@ -1187,7 +1237,7 @@
             document.getElementById('coverPage').style.display = 'block';
         }
 
-        // ========== 自动调整旋转尺寸（核心修复函数）==========
+        // ========== 自动调整旋转尺寸（终极修复版）==========
         function adjustRotation() {
             // 只在移动端生效
             if (window.innerWidth > 767) return;
@@ -1199,22 +1249,25 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             
-            // 计算合适的容器尺寸（确保内容不会过大）
-            // 取视口较小值的80%作为基准
-            const baseSize = Math.min(viewportWidth, viewportHeight) * 0.8;
+            // 计算合适的容器尺寸（确保内容不会溢出）
+            // 留足边距，确保所有内容都在可视区域内
+            const margin = 20; // 边距像素值
             
-            // 设置旋转后的尺寸
-            // 逻辑：旋转后的宽度 = 原视口高度，旋转后的高度 = 原视口宽度
-            container.style.width = `${Math.min(viewportHeight * 0.9, 600)}px`;  // 限制最大宽度
-            container.style.height = `${Math.min(viewportWidth * 0.9, 400)}px`; // 限制最大高度
+            // 核心算法：旋转后的尺寸 = (原视口尺寸 - 边距) * 缩放比例
+            const rotatedWidth = Math.min(viewportHeight - margin * 2, 500); // 最大500px
+            const rotatedHeight = Math.min(viewportWidth - margin * 2, 350); // 最大350px
+            
+            // 应用计算出的尺寸
+            container.style.width = `${rotatedWidth}px`;
+            container.style.height = `${rotatedHeight}px`;
             
             // 重新定位到视口中心
             container.style.top = '50%';
             container.style.left = '50%';
-            container.style.transform = 'translate(-50%, -50%) rotate(90deg)';
-            
-            // 确保内容缩放适应
+            container.style.transform = `translate(-50%, -50%) rotate(90deg)`;
             container.style.transformOrigin = 'center center';
+            
+            console.log(`📱 手机端横屏调整: 视口${viewportWidth}x${viewportHeight} → 容器${rotatedWidth}x${rotatedHeight}`);
         }
 
         // 页面加载完成后执行初始化
@@ -1224,13 +1277,18 @@
             updateSliderValue('q9', 'q9Value', '%');
             
             // 应用横屏调整
-            setTimeout(adjustRotation, 50); // 延迟确保DOM完全渲染
+            setTimeout(adjustRotation, 100);
         });
 
         // 监听各种尺寸变化事件
-        window.addEventListener('resize', adjustRotation);
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(adjustRotation, 150);
+        });
+        
         window.addEventListener('orientationchange', function() {
-            setTimeout(adjustRotation, 150); // 延迟更长确保方向变化完成
+            setTimeout(adjustRotation, 200);
         });
         
         // 页面从缓存恢复时重新调整
@@ -1238,13 +1296,6 @@
             if (event.persisted) {
                 setTimeout(adjustRotation, 100);
             }
-        });
-        
-        // 监听窗口大小变化
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(adjustRotation, 100);
         });
     </script>
 </body>
