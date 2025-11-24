@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>原神欧非守恒定律检测仪</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         /* 星空背景 */
         body {
@@ -15,7 +14,6 @@
             color: #fff;
             overflow-x: hidden;
         }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -24,213 +22,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        /* 桌面端优化 */
-        @media screen and (min-width: 768px) {
-            .container {
-                padding: 40px;
-            }
-            
-            .cover-title {
-                font-size: 4em;
-            }
-            
-            .card-title {
-                font-size: 1.6em;
-            }
-            
-            .cover-emoji {
-                font-size: 5em;
-            }
-            
-            .card {
-                padding: 50px;
-                min-height: 500px;
-            }
-            
-            .start-btn {
-                padding: 25px 70px;
-                font-size: 1.5em;
-            }
-        }
-
-        /* 手机端强制横屏显示 - 终极修复版 */
-        @media screen and (max-width: 767px) {
-            body {
-                overflow: hidden;
-                position: fixed;
-                width: 100%;
-                height: 100%;
-            }
-            
-            .container {
-                /* 核心修复：使用视口较小值的百分比，确保完全可见 */
-                width: 85vh !important;  /* 使用视口高度的85% */
-                height: 85vw !important;  /* 使用视口宽度的85% */
-                
-                /* 严格限制最大尺寸，即使在大屏手机上也不会过大 */
-                max-width: 480px !important;
-                max-height: 320px !important;
-                
-                /* 精确定位到中心 */
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg) !important;
-                transform-origin: center center;
-                
-                /* 减小内边距，给内容更多空间 */
-                padding: 8px !important;
-                margin: 0;
-                
-                /* 禁用触摸滚动 */
-                touch-action: none;
-                overflow: hidden; /* 隐藏溢出的内容 */
-            }
-            
-            /* ===== 所有字体使用clamp()动态缩放 ===== */
-            .cover-title {
-                font-size: clamp(1.2em, 3.5vw, 1.6em) !important;
-                margin-bottom: 5px !important;
-            }
-            
-            .cover-subtitle {
-                font-size: clamp(0.8em, 2.5vw, 1em) !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .cover-emoji {
-                font-size: clamp(1.5em, 4vw, 2em) !important;
-                margin: 8px 0 !important;
-            }
-            
-            /* 条款区域 - 可滚动以节省空间 */
-            .terms-section {
-                margin-top: 8px !important;
-                padding: 8px !important;
-                font-size: 0.65em !important;
-                max-height: 30vh; /* 限制高度 */
-                overflow-y: auto; /* 允许滚动 */
-            }
-            
-            .card {
-                padding: 12px !important;
-                width: 100% !important;
-                margin: 0 !important;
-                min-height: auto !important; /* 移除最小高度限制 */
-                max-height: 70vh; /* 限制最大高度 */
-                overflow-y: auto; /* 允许纵向滚动 */
-            }
-            
-            .card-title {
-                font-size: clamp(1em, 3vw, 1.2em) !important;
-            }
-            
-            .card-content p {
-                font-size: clamp(0.75em, 2.2vw, 0.85em) !important;
-                margin-bottom: 8px !important;
-            }
-            
-            /* 选项按钮 - 减小间距和内边距 */
-            .options {
-                margin-bottom: 10px !important;
-            }
-            
-            .options label {
-                padding: 8px 10px !important;
-                margin: 4px 0 !important;
-                font-size: 0.7em !important;
-            }
-            
-            .options input[type="radio"]:checked + label::after {
-                right: 10px !important;
-                font-size: 1em !important;
-            }
-            
-            /* 滑块组件 - 紧凑布局 */
-            .slider-container {
-                margin: 10px 0 !important;
-                padding: 10px !important;
-            }
-            
-            .slider-label {
-                font-size: clamp(0.75em, 2vw, 0.85em) !important;
-                margin-bottom: 8px !important;
-            }
-            
-            .slider-value {
-                font-size: clamp(0.9em, 2.5vw, 1em) !important;
-                margin-bottom: 8px !important;
-            }
-            
-            /* 导航按钮 - 更小更紧凑 */
-            .card-nav {
-                gap: 8px !important;
-                margin-top: 10px !important;
-            }
-            
-            .card-nav button {
-                padding: 6px 12px !important;
-                font-size: 0.75em !important;
-            }
-            
-            .start-btn {
-                padding: 10px 25px !important;
-                font-size: 0.9em !important;
-                margin: 10px 0 !important;
-            }
-            
-            /* 进度条 - 更细 */
-            .progress-bar {
-                height: 4px !important;
-                margin-bottom: 12px !important;
-            }
-            
-            .progress-text {
-                font-size: 0.75em !important;
-                margin-bottom: 12px !important;
-            }
-            
-            /* 结果页 - 单列布局，缩小字体 */
-            .fortune-card {
-                padding: 15px !important;
-            }
-            
-            .fortune-title {
-                font-size: clamp(1.2em, 3vw, 1.4em) !important;
-            }
-            
-            .fortune-level {
-                font-size: 1em !important;
-            }
-            
-            .fortune-text {
-                font-size: clamp(0.75em, 2vw, 0.85em) !important;
-            }
-            
-            .fortune-details {
-                grid-template-columns: 1fr !important; /* 强制单列 */
-                gap: 8px !important;
-                margin-top: 15px !important;
-            }
-            
-            .good, .bad {
-                padding: 8px !important;
-                font-size: 0.7em !important;
-            }
-            
-            .debug-info {
-                padding: 8px !important;
-                font-size: 0.6em !important;
-                margin-top: 10px !important;
-            }
-            
-            .validation-warning {
-                padding: 6px !important;
-                font-size: 0.65em !important;
-            }
         }
 
         /* 封面页 */
@@ -243,6 +34,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .cover-title {
+            font-size: 3.5em;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #D4A574, #FFD700, #B8860B);
             -webkit-background-clip: text;
@@ -255,6 +47,7 @@
             margin-bottom: 40px;
         }
         .cover-emoji {
+            font-size: 4em;
             margin: 30px 0;
             animation: pulse 2s infinite;
         }
@@ -263,6 +56,8 @@
             50% { transform: scale(1.1); }
         }
         .start-btn {
+            padding: 20px 60px;
+            font-size: 1.3em;
             background: linear-gradient(45deg, #D4A574, #B8860B);
             border: none;
             border-radius: 15px;
@@ -376,6 +171,7 @@
             margin-right: 15px;
         }
         .card-title {
+            font-size: 1.4em;
             color: #FFD700;
         }
         .card-content p {
@@ -985,7 +781,7 @@
             if (currentCard === 4) {
                 isAnswered = document.getElementById('q4').value !== '0';
             } else if (currentCard === 9) {
-                isAnswered = true;
+                isAnswered = true; // 滑块默认值50视为已答
             } else {
                 isAnswered = !!cardEl.querySelector('input[type="radio"]:checked');
             }
@@ -1019,20 +815,24 @@
         function collectAnswers() {
             const answers = [];
             
+            // Q1-Q3
             for (let i = 1; i <= 3; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if (!selected) { alert(`请回答第${i}题！`); return null; }
                 answers.push(selected.value);
             }
             
+            // Q4 滑块
             answers.push(document.getElementById('q4').value);
             
+            // Q5-Q8
             for (let i = 5; i <= 8; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if (!selected) { alert(`请回答第${i}题！`); return null; }
                 answers.push(selected.value);
             }
             
+            // Q9 滑块
             answers.push(document.getElementById('q9').value);
             
             return answers;
@@ -1040,25 +840,29 @@
 
         // ========== 交叉验证逻辑 ==========
         function validateAnswers(answers) {
-            const q1 = parseInt(answers[0]);
-            const q4 = parseInt(answers[3]);
-            const q6 = parseInt(answers[5]);
-            const q7 = parseInt(answers[6]);
-            const q8 = parseInt(answers[7]);
-            const q9 = parseInt(answers[8]);
-            const q5 = parseInt(answers[4]);
+            const q1 = parseInt(answers[0]); // 活跃度自评
+            const q4 = parseInt(answers[3]); // 实际登录天数
+            const q6 = parseInt(answers[5]); // 保底进度
+            const q7 = parseInt(answers[6]); // 上次出货时间
+            const q8 = parseInt(answers[7]); // 出货满意度
+            const q9 = parseInt(answers[8]); // 运气自评
+            const q5 = parseInt(answers[4]); // 测谎题
             
             const issues = [];
             
+            // 验证1：活跃度矛盾
             const activityGap = Math.abs(q1 - Math.ceil(q4 / 2));
             if (activityGap >= 2) issues.push('自评与行为严重不符');
             
+            // 验证2：时间逻辑一致性
             if (q6 <= 2 && q7 >= 3) issues.push('保底感知与出货时间冲突');
             
+            // 验证3：非酋认知一致性
             const objectiveLuck = (q7 <= 2 ? 0.3 : 0) + (q8 <= 2 ? 0.3 : 0);
             const perceptionGap = Math.abs(q9/100 - (1 - objectiveLuck));
             if (perceptionGap >= 0.5) issues.push('认知偏差异常');
             
+            // 测谎检测
             const sincerityScore = (q5 === 3 || q5 === 4) ? 0 : 1;
             if (sincerityScore === 0) issues.push('测谎陷阱触发');
             
@@ -1236,67 +1040,6 @@
             document.getElementById('surveyPage').style.display = 'none';
             document.getElementById('coverPage').style.display = 'block';
         }
-
-        // ========== 自动调整旋转尺寸（终极修复版）==========
-        function adjustRotation() {
-            // 只在移动端生效
-            if (window.innerWidth > 767) return;
-            
-            const container = document.querySelector('.container');
-            if (!container) return;
-            
-            // 获取精确的视口尺寸
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            // 计算合适的容器尺寸（确保内容不会溢出）
-            // 留足边距，确保所有内容都在可视区域内
-            const margin = 20; // 边距像素值
-            
-            // 核心算法：旋转后的尺寸 = (原视口尺寸 - 边距) * 缩放比例
-            const rotatedWidth = Math.min(viewportHeight - margin * 2, 500); // 最大500px
-            const rotatedHeight = Math.min(viewportWidth - margin * 2, 350); // 最大350px
-            
-            // 应用计算出的尺寸
-            container.style.width = `${rotatedWidth}px`;
-            container.style.height = `${rotatedHeight}px`;
-            
-            // 重新定位到视口中心
-            container.style.top = '50%';
-            container.style.left = '50%';
-            container.style.transform = `translate(-50%, -50%) rotate(90deg)`;
-            container.style.transformOrigin = 'center center';
-            
-            console.log(`📱 手机端横屏调整: 视口${viewportWidth}x${viewportHeight} → 容器${rotatedWidth}x${rotatedHeight}`);
-        }
-
-        // 页面加载完成后执行初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化滑块值
-            updateSliderValue('q4', 'q4Value', '天');
-            updateSliderValue('q9', 'q9Value', '%');
-            
-            // 应用横屏调整
-            setTimeout(adjustRotation, 100);
-        });
-
-        // 监听各种尺寸变化事件
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(adjustRotation, 150);
-        });
-        
-        window.addEventListener('orientationchange', function() {
-            setTimeout(adjustRotation, 200);
-        });
-        
-        // 页面从缓存恢复时重新调整
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                setTimeout(adjustRotation, 100);
-            }
-        });
     </script>
 </body>
 </html>
